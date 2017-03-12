@@ -1,6 +1,7 @@
 from urllib import request
 import xml.etree.ElementTree as ET
 import os
+import codecs
 from html.parser import HTMLParser
 
 
@@ -58,20 +59,31 @@ class JiraParser:
             root = tree.getroot()[0][6:]
             for child in root:
                 count_bug_reports = count_bug_reports + 1
+                # Save main bug report information
                 date = child.find("created").text
                 date = date.split(" ")
                 date = date[1] + "." + month_name_to_num[date[2]] + "." + date[3]
-                path = self.bugs_catalog_path + "/" + date
+                path = self.bugs_catalog_path + date + "/"
                 if not os.path.exists(path):
                     os.mkdir(path)
-                list_dir = os.listdir(path)
                 file_name = child.find("key").attrib["id"]
-                file_for_save = open(path + "/" + file_name + ".txt", "w")
+                file_for_save = open(path + file_name + ".txt", "w")
                 file_for_save.write(child.find("summary").text + "\n")
 
                 html_parser.reset_parsed_data()
                 html_parser.feed(str(child.find("description").text))
                 file_for_save.write(html_parser.get_parsed_data())
+
+                # Save addition information
+                path += "/Additional/"
+                if not os.path.exists(path):
+                    os.mkdir(path)
+                file_for_save = codecs.open(path + file_name + ".txt", "w", "utf-8")
+                file_for_save.write(child.find("link").text + "\n")
+                file_for_save.write(child.find("type").text + "\n")
+                file_for_save.write(child.find("priority").text + "\n")
+
+
                 file_for_save.close()
 
             if count_bug_reports == 0:
