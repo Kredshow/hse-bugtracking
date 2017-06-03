@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <style>
+            .window1 {
+                position:absolute;
+                top:12.5%;
+                left:0px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var height = $(window).height();
+            var width = $(window).width();
+
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("class", "window1")
+                .attr("width", width)
+                .attr("height", height * 0.75)
+                .call(d3.zoom().on("zoom", function () {
+                    svg.attr("transform", d3.event.transform);
+                }))
+                .append("g");
+
+            type_to_color = {
+                "Bug": "red",
+                "Improvement": "blue",
+                "Sub-task": "yellow",
+                "New Feature": "YellowGreen",
+                "Story": "#708090",
+                "Other": "black"
+            }
+
+            var point_vectors = d3.csv("templates/saveVectors.csv", function(data) {
+                var min_x = Infinity, max_x = -Infinity, min_y = Infinity, max_y = -Infinity;
+                data.forEach(function(obj) {
+                    obj.x = parseFloat(obj.x);
+                    obj.y = parseFloat(obj.y);
+
+                    min_x = Math.min(min_x, obj.x);
+                    max_x = Math.max(max_x, obj.x);
+                    min_y = Math.min(min_y, obj.y);
+                    max_y = Math.max(max_y, obj.y);
+                });
+
+                scale_function_x = d3.scaleLinear().domain([min_x, max_x]).range([-width / 2 + 5, width / 2 - 5]);
+                scale_function_y = d3.scaleLinear().domain([min_y, max_y]).range([0 + 5, height - 5]);
+
+                svg.selectAll("circle")
+                    .data(data)
+                    .enter()
+                    .append("a")
+                    .attr("xlink:href", function (d) {
+                        return "https://issues.apache.org/jira/browse/" + d.name;
+                    })
+                    .append("circle")
+                    .attr("class", "bugdot")
+                    .attr("cx", function (d) {
+                        return width / 2 + scale_function_x(d.x);
+                    })
+                    .attr("cy", function (d) {
+                        return height - scale_function_y(d.y);
+                    })
+                    .attr("r", 3)
+                    .attr("fill", function(d) {
+                        if (d.type in type_to_color) {
+                            return type_to_color[d.type];
+                        } else {
+                            return "black"
+                        }
+                    })
+                    .attr("data-legend", function(d) {
+                        return d.type;
+                    })
+                    .style("stroke", " #ff00ff")
+                    .style("stroke-width", 0)
+                    .on("mouseover", function (d) {
+                        d3.select(this).style("stroke-width", 1);
+                    })
+                    .on("mouseout", function (d) {
+                        d3.select(this).style("stroke-width", 0);
+                    });
+            });
+
+            var svg2 = d3.select("body")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", 100);
+
+            var rect_size = 18;
+            var space_between_rects = 3;
+            var space_between_rects_and_text = 2;
+            var text_width = 110;
+            svg2.selectAll("rect")
+                .data($.map(type_to_color, function(value, index) {
+                    return [[index, value]];
+                }))
+                .enter()
+                .append("rect")
+                .attr("width", rect_size)
+                .attr("height", rect_size)
+                .attr("fill", function (d) {
+                    return d[1];
+                })
+                .attr("y", function (d, idx) {
+                    if (idx > 2) {
+                        return (idx - 3) * (rect_size + space_between_rects);
+                    } else {
+                        return idx * (rect_size + space_between_rects);
+                    }
+                })
+                .attr("x", function (d, idx) {
+                    if (idx > 2) {
+                        return rect_size + text_width + 2 * space_between_rects_and_text;
+                    } else {
+                        return 0;
+                    }
+                })
+
+            svg2.selectAll("text")
+                .data($.map(type_to_color, function(value, index) {
+                    return [[index, value]];
+                }))
+                .enter()
+                .append("text")
+                .attr("width", text_width)
+                .attr("height", rect_size)
+                .attr("x", function (d, idx) {
+                    if (idx > 2) {
+                        return rect_size * 2 + text_width + space_between_rects_and_text * 2;
+                    } else {
+                        return rect_size + space_between_rects_and_text;
+                    }
+                })
+                .attr("y", function (d, idx) {
+                    if (idx > 2) {
+                        return (idx - 3) * (rect_size + space_between_rects) + 15;
+                    } else {
+                        return idx * (rect_size + space_between_rects) + 15;
+                    }
+                })
+                .attr("font-family", "sans-serif")
+                .text(function (d) {
+                    return d[0];
+                });
+
+
+        </script>
+    </body>
+</html>

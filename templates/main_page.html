@@ -1,0 +1,77 @@
+<html>
+
+<head>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Bug reports analyzer</title>
+
+</head>
+
+<body>
+    <div>
+
+        <div class="row">
+
+            <div class="col-md-4"></div>
+            <div class="col-md-5">
+                <h3>Анализ баг репортов алгоритмом word2vec</h3>
+            </div>
+            <div class="col-md-3"></div>
+
+        </div>
+
+        <div class="container-fluid" style="padding:100pt; margin-top:10pt; background:#ff6d92 radial-gradient(circle at center,#f5b200 0,#fc636b 30%,#ff6d92 70%);
+                    background-size:300vw 300vh; background-position: -100vw -120vh;">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-9">
+                    <h1 style="font-size:60px; color:white;">Just type [start date; end date]</h1><br />
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-7">
+                    <h2 style="color:white;">And I will analyze it...</h2><br />
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-3"></div>
+                <div class="col-md-8">
+                    <form class="form-inline" action="{{url_for('main_menu')}}" method="POST">
+
+                        <div class="form-group">
+                            <label for="star-date-input" style="color:white;">
+                                Start date:
+                            </label>
+                            <input type="date" class="form-control" id="start-date-input" name="start-date"/>
+                        </div>
+
+                        <div class="form-group" style="margin-left:10px">
+                            <label for="end-date-input" style="color:white">
+                                End date:
+                            </label>
+                            <input type="date" class="form-control" id="end-date-input" name="end-date"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-default" style="background-color:#6a67ce; border:1px solid #6a67ce; color:white">Submit</button>
+
+                    </form>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
